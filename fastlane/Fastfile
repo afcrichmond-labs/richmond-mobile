@@ -1,0 +1,20 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and deploy to TestFlight"
+  lane :beta do
+    increment_build_number
+    build_app(scheme: "Richmond")
+    upload_to_testflight
+    slack(message: "iOS beta deployed to TestFlight")
+  end
+end
+
+platform :android do
+  desc "Build and deploy to Firebase"
+  lane :beta do
+    gradle(task: "assembleRelease")
+    firebase_app_distribution(app: ENV["FIREBASE_APP_ID"])
+    slack(message: "Android beta deployed to Firebase")
+  end
+end
